@@ -27,6 +27,8 @@ process.stdin.pipe(tr).pipe(process.stdout)
 ###
 
 ###Lines###
+
+###
 split = require 'split'
 through = require 'through'
 lineCount = 0
@@ -40,7 +42,15 @@ tr = through( (buf) ->
       this.queue(line.toUpperCase() + '\n')
 
     lineCount++
+    true
   )
 
 process.stdin.pipe(split()).pipe(tr).pipe(process.stdout)
+###
+
+###Concat###
+concat = require 'concat-stream'
+
+reverse = (body) ->
+	obj = JS
 
