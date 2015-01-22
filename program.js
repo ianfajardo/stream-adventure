@@ -121,21 +121,35 @@ stream.end()
 
 /*HTML Stream */
 
+
+/*
+trumpet = require 'trumpet'
+through = require 'through'
+
+tt = trumpet()
+
+stream = tt.select('.loud').createStream()
+stream.pipe(through (buf) ->
+    this.queue( buf.toString().toUpperCase())
+  ).pipe(stream)
+
+process.stdin.pipe(tt).pipe(process.stdout)
+ */
+
+
+/*Duplexer */
+
 (function() {
-  var stream, through, trumpet, tt;
+  var duplex, spawn;
 
-  trumpet = require('trumpet');
+  spawn = require('child_process').spawn;
 
-  through = require('through');
+  duplex = require('duplexer');
 
-  tt = trumpet();
-
-  stream = tt.select('.loud').createStream();
-
-  stream.pipe(through(function(buf) {
-    return this.queue(buf.toString().toUpperCase());
-  })).pipe(stream);
-
-  process.stdin.pipe(tt).pipe(process.stdout);
+  module.exports = function(cmd, args) {
+    var ps;
+    ps = spawn(cmd, args);
+    return duplex(ps.stdin, ps.stdout);
+  };
 
 }).call(this);

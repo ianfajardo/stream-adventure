@@ -92,7 +92,7 @@ stream.end()
 ###
 
 ###HTML Stream###
-
+###
 trumpet = require 'trumpet'
 through = require 'through'
 
@@ -104,3 +104,12 @@ stream.pipe(through (buf) ->
   ).pipe(stream)
 
 process.stdin.pipe(tt).pipe(process.stdout)
+###
+
+###Duplexer###
+spawn = require('child_process').spawn
+duplex = require 'duplexer'
+
+module.exports = (cmd, args) ->
+  ps = spawn(cmd,args)
+  duplex(ps.stdin, ps.stdout)
