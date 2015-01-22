@@ -80,25 +80,31 @@ process.stdin.pipe(concat (src) ->
 
 /*HTTP SERVER */
 
+
+/*
+http = require 'http'
+through = require 'through'
+port = process.argv[2]
+
+server = http.createServer (req,res) ->
+  if(req.method == 'POST')
+    req.pipe(through (buf)-> 
+        this.queue(buf.toString().toUpperCase())
+      ).pipe(res) 
+  else
+    res.end();
+
+server.listen Number port
+ */
+
+
+/*HTTP Client */
+
 (function() {
-  var http, port, server, through;
+  var request;
 
-  http = require('http');
+  request = require('request');
 
-  through = require('through');
-
-  port = process.argv[2];
-
-  server = http.createServer(function(req, res) {
-    if (req.method === 'POST') {
-      return req.pipe(through(function(buf) {
-        return this.queue(buf.toString().toUpperCase());
-      })).pipe(res);
-    } else {
-      return res.end();
-    }
-  });
-
-  server.listen(Number(port));
+  process.stdin.pipe(request.post('http://localhost:8000')).pipe(process.stdout);
 
 }).call(this);

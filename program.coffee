@@ -60,6 +60,7 @@ process.stdin.pipe(concat (src) ->
 ###
 
 ###HTTP SERVER###
+###
 http = require 'http'
 through = require 'through'
 port = process.argv[2]
@@ -73,4 +74,9 @@ server = http.createServer (req,res) ->
     res.end();
 
 server.listen Number port
+###
 
+###HTTP Client###
+request = require 'request'
+
+process.stdin.pipe(request.post('http://localhost:8000')).pipe(process.stdout)
