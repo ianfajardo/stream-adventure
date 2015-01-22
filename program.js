@@ -30,15 +30,38 @@ process.stdin.pipe(process.stdout)
 
 /*Transform */
 
+
+/*
+through = require 'through'
+tr = through (buf) -> 
+  this.queue(buf.toString().toUpperCase())
+
+process.stdin.pipe(tr).pipe(process.stdout)
+ */
+
+
+/*Lines */
+
 (function() {
-  var through, tr;
+  var lineCount, split, through, tr;
+
+  split = require('split');
 
   through = require('through');
 
+  lineCount = 0;
+
   tr = through(function(buf) {
-    return this.queue(buf.toString().toUpperCase());
+    var line;
+    line = buf.toString();
+    if (lineCount % 2 === 0) {
+      this.queue(line.toLowerCase() + '\n');
+    } else {
+      this.queue(line.toUpperCase() + '\n');
+    }
+    return lineCount++;
   });
 
-  process.stdin.pipe(tr).pipe(process.stdout);
+  process.stdin.pipe(split()).pipe(tr).pipe(process.stdout);
 
 }).call(this);

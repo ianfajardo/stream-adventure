@@ -26,3 +26,21 @@ tr = through (buf) ->
 process.stdin.pipe(tr).pipe(process.stdout)
 ###
 
+###Lines###
+split = require 'split'
+through = require 'through'
+lineCount = 0
+
+tr = through( (buf) ->
+    line = buf.toString()
+
+    if(lineCount % 2 == 0)
+      this.queue(line.toLowerCase() + '\n')
+    else
+      this.queue(line.toUpperCase() + '\n')
+
+    lineCount++
+  )
+
+process.stdin.pipe(split()).pipe(tr).pipe(process.stdout)
+
