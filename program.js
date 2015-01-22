@@ -100,11 +100,25 @@ server.listen Number port
 
 /*HTTP Client */
 
+
+/*
+request = require 'request'
+
+process.stdin.pipe(request.post('http://localhost:8000')).pipe(process.stdout)
+ */
+
+
+/*WebSockets */
+
 (function() {
-  var request;
+  var stream, ws;
 
-  request = require('request');
+  ws = require('websocket-stream');
 
-  process.stdin.pipe(request.post('http://localhost:8000')).pipe(process.stdout);
+  stream = ws('ws://localhost:8000');
+
+  stream.write("hello\n");
+
+  stream.end("hello\n");
 
 }).call(this);

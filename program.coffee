@@ -77,6 +77,16 @@ server.listen Number port
 ###
 
 ###HTTP Client###
+###
 request = require 'request'
 
 process.stdin.pipe(request.post('http://localhost:8000')).pipe(process.stdout)
+###
+
+###WebSockets###
+###
+ws = require 'websocket-stream'
+stream = ws 'ws://localhost:8000'
+stream.write("hello\n")
+stream.end()
+###
