@@ -110,15 +110,32 @@ process.stdin.pipe(request.post('http://localhost:8000')).pipe(process.stdout)
 
 /*WebSockets */
 
+
+/*
+ws = require 'websocket-stream'
+stream = ws 'ws://localhost:8000'
+stream.write("hello\n")
+stream.end()
+ */
+
+
+/*HTML Stream */
+
 (function() {
-  var stream, ws;
+  var stream, through, trumpet, tt;
 
-  ws = require('websocket-stream');
+  trumpet = require('trumpet');
 
-  stream = ws('ws://localhost:8000');
+  through = require('through');
 
-  stream.write("hello\n");
+  tt = trumpet();
 
-  stream.end("hello\n");
+  stream = tt.select('.loud').createStream();
+
+  stream.pipe(through(function(buf) {
+    return this.queue(buf.toString().toUpperCase());
+  })).pipe(stream);
+
+  process.stdin.pipe(tt).pipe(process.stdout);
 
 }).call(this);

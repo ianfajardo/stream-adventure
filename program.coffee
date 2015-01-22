@@ -90,3 +90,17 @@ stream = ws 'ws://localhost:8000'
 stream.write("hello\n")
 stream.end()
 ###
+
+###HTML Stream###
+
+trumpet = require 'trumpet'
+through = require 'through'
+
+tt = trumpet()
+
+stream = tt.select('.loud').createStream()
+stream.pipe(through (buf) ->
+    this.queue( buf.toString().toUpperCase())
+  ).pipe(stream)
+
+process.stdin.pipe(tt).pipe(process.stdout)
