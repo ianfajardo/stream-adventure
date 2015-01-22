@@ -51,6 +51,9 @@ process.stdin.pipe(split()).pipe(tr).pipe(process.stdout)
 ###Concat###
 concat = require 'concat-stream'
 
-reverse = (body) ->
-	obj = JS
+process.stdin.pipe(concat (src) ->
+    s = src.toString().split('').reverse().join('')
+    console.log s 
+    true
+  )
 

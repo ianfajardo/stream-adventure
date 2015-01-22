@@ -42,26 +42,40 @@ process.stdin.pipe(tr).pipe(process.stdout)
 
 /*Lines */
 
+
+/*
+split = require 'split'
+through = require 'through'
+lineCount = 0
+
+tr = through( (buf) ->
+    line = buf.toString()
+
+    if(lineCount % 2 == 0)
+      this.queue(line.toLowerCase() + '\n')
+    else
+      this.queue(line.toUpperCase() + '\n')
+
+    lineCount++
+    true
+  )
+
+process.stdin.pipe(split()).pipe(tr).pipe(process.stdout)
+ */
+
+
+/*Concat */
+
 (function() {
-  var lineCount, split, through, tr;
+  var concat;
 
-  split = require('split');
+  concat = require('concat-stream');
 
-  through = require('through');
-
-  lineCount = 0;
-
-  tr = through(function(buf) {
-    var line;
-    line = buf.toString();
-    if (lineCount % 2 === 0) {
-      this.queue(line.toLowerCase() + '\n');
-    } else {
-      this.queue(line.toUpperCase() + '\n');
-    }
-    return lineCount++;
-  });
-
-  process.stdin.pipe(split()).pipe(tr).pipe(process.stdout);
+  process.stdin.pipe(concat(function(src) {
+    var s;
+    s = src.toString().split('').reverse().join('');
+    console.log(s);
+    return true;
+  }));
 
 }).call(this);
