@@ -107,9 +107,30 @@ process.stdin.pipe(tt).pipe(process.stdout)
 ###
 
 ###Duplexer###
+###
 spawn = require('child_process').spawn
 duplex = require 'duplexer'
 
 module.exports = (cmd, args) ->
   ps = spawn(cmd,args)
   duplex(ps.stdin, ps.stdout)
+###
+
+###Duplexer Redux###
+duplex = require 'duplexer'
+through = require 'through'
+
+module.exports = (counter) ->
+  counts = {}
+
+  write = (row) ->
+    counts[row.country] = (counts[row.country] || 0) + 1
+    true
+
+  end = ->
+    counter.setCounts(counts)
+    true
+
+  input = through(write, end)
+  
+  return duplex(input, counter)

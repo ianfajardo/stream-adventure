@@ -139,17 +139,39 @@ process.stdin.pipe(tt).pipe(process.stdout)
 
 /*Duplexer */
 
-(function() {
-  var duplex, spawn;
 
-  spawn = require('child_process').spawn;
+/*
+spawn = require('child_process').spawn
+duplex = require 'duplexer'
+
+module.exports = (cmd, args) ->
+  ps = spawn(cmd,args)
+  duplex(ps.stdin, ps.stdout)
+ */
+
+
+/*Duplexer Redux */
+
+(function() {
+  var duplex, through;
 
   duplex = require('duplexer');
 
-  module.exports = function(cmd, args) {
-    var ps;
-    ps = spawn(cmd, args);
-    return duplex(ps.stdin, ps.stdout);
+  through = require('through');
+
+  module.exports = function(counter) {
+    var counts, end, input, write;
+    counts = {};
+    write = function(row) {
+      counts[row.country] = (counts[row.country] || 0) + 1;
+      return true;
+    };
+    end = function() {
+      counter.setCounts(counts);
+      return true;
+    };
+    input = through(write, end);
+    return duplex(input, counter);
   };
 
 }).call(this);
