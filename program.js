@@ -66,16 +66,39 @@ process.stdin.pipe(split()).pipe(tr).pipe(process.stdout)
 
 /*Concat */
 
+
+/*
+concat = require 'concat-stream'
+
+process.stdin.pipe(concat (src) ->
+    s = src.toString().split('').reverse().join('')
+    console.log s 
+    true
+  )
+ */
+
+
+/*HTTP SERVER */
+
 (function() {
-  var concat;
+  var http, port, server, through;
 
-  concat = require('concat-stream');
+  http = require('http');
 
-  process.stdin.pipe(concat(function(src) {
-    var s;
-    s = src.toString().split('').reverse().join('');
-    console.log(s);
-    return true;
-  }));
+  through = require('through');
+
+  port = process.argv[2];
+
+  server = http.createServer(function(req, res) {
+    if (req.method === 'POST') {
+      return req.pipe(through(function(buf) {
+        return this.queue(buf.toString().toUpperCase());
+      })).pipe(res);
+    } else {
+      return res.end();
+    }
+  });
+
+  server.listen(Number(port));
 
 }).call(this);

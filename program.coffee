@@ -49,6 +49,7 @@ process.stdin.pipe(split()).pipe(tr).pipe(process.stdout)
 ###
 
 ###Concat###
+###
 concat = require 'concat-stream'
 
 process.stdin.pipe(concat (src) ->
@@ -56,4 +57,20 @@ process.stdin.pipe(concat (src) ->
     console.log s 
     true
   )
+###
+
+###HTTP SERVER###
+http = require 'http'
+through = require 'through'
+port = process.argv[2]
+
+server = http.createServer (req,res) ->
+  if(req.method == 'POST')
+    req.pipe(through (buf)-> 
+        this.queue(buf.toString().toUpperCase())
+      ).pipe(res) 
+  else
+    res.end();
+
+server.listen Number port
 
