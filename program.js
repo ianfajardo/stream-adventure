@@ -152,26 +152,52 @@ module.exports = (cmd, args) ->
 
 /*Duplexer Redux */
 
-(function() {
-  var duplex, through;
 
-  duplex = require('duplexer');
+/*
+duplex = require 'duplexer'
+through = require 'through'
+
+module.exports = (counter) ->
+  counts = {}
+
+  write = (row) ->
+    counts[row.country] = (counts[row.country] || 0) + 1
+    true
+
+  end = ->
+    counter.setCounts(counts)
+    true
+
+  input = through(write, end)
+  
+  return duplex(input, counter)
+ */
+
+
+/*Combiner */
+
+(function() {
+  var combine, split, through, zlib;
+
+  combine = require('stream-combiner');
+
+  split = require('split');
 
   through = require('through');
 
-  module.exports = function(counter) {
-    var counts, end, input, write;
-    counts = {};
-    write = function(row) {
-      counts[row.country] = (counts[row.country] || 0) + 1;
+  zlib = require('lib');
+
+  module.exports = function() {
+    var tr, write;
+    tr = through(write, end);
+    return write = function(line) {
+      var row;
+      if (line.length === 0) {
+        return;
+      }
+      row = JSON.parse(line);
       return true;
     };
-    end = function() {
-      counter.setCounts(counts);
-      return true;
-    };
-    input = through(write, end);
-    return duplex(input, counter);
   };
 
 }).call(this);

@@ -117,6 +117,7 @@ module.exports = (cmd, args) ->
 ###
 
 ###Duplexer Redux###
+###
 duplex = require 'duplexer'
 through = require 'through'
 
@@ -134,3 +135,18 @@ module.exports = (counter) ->
   input = through(write, end)
   
   return duplex(input, counter)
+###
+
+###Combiner###
+combine = require 'stream-combiner'
+split = require 'split'
+through = require 'through'
+zlib = require 'lib'
+
+module.exports = ->
+  tr = through(write, end)
+
+  write = (line) ->
+    return if line.length == 0
+    row = JSON.parse line
+    true
