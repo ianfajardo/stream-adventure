@@ -141,12 +141,30 @@ module.exports = (counter) ->
 combine = require 'stream-combiner'
 split = require 'split'
 through = require 'through'
-zlib = require 'lib'
+zlib = require 'zlib'
 
 module.exports = ->
-  tr = through(write, end)
 
+  grouper = through(write, end)
+  current = null
   write = (line) ->
     return if line.length == 0
     row = JSON.parse line
-    true
+
+    if row.type == 'genre'
+      this.queue(JSON.stringify(current) + '\n') if current
+      current = { name:row.name, books: [] }
+
+    else if row.type == 'book'
+      current.books.push(row.name)
+
+    return
+
+  end = ->
+    this.queue(JSON.stringify(current) + '\n') if current
+    this.queue(null)
+    return
+
+
+
+  combine(split(), grouper, zlib.createGzip())
